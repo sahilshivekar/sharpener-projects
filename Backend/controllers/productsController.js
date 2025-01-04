@@ -93,7 +93,7 @@ const createProduct = async(req,res)=>{
         if(!name ||!category ||!price ||!image){
             return res.status(400).send({
                 success: false,
-                message: "All fields are required",
+                message: "All fields are  required",
             })
         }
         const data = await db.query('INSERT INTO products (name, category, price, image) VALUES (?,?,?,?)',[name, category, price, image])
