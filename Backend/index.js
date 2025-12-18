@@ -1,19 +1,22 @@
-import dotenv from 'dotenv'
-import {app} from './app.js'
-import express from 'express'
-import mySqlpool from './config/db.js'
+import dotenv from "dotenv";
+import pgPool from "./config/db.js";
+import { app } from "./app.js";
 
-dotenv.config({
-    path : "./env"
-})
+dotenv.config({ path: "./.env" });
 
-app.use(express.json())
+console.log("🚀 SERVER ENTRY FILE LOADED");
 
-mySqlpool.query('SELECT 1').then(()=>{
-    console.log('database connected successfully')
-    app.listen(process.env.PORT || 3000, ()=>{
-        console.log(`server connected on PORT ${process.env.PORT}`)
-    })
-}).catch((error)=>{
-    console.log(error)
-})
+// Test PostgreSQL connection first
+pgPool
+  .query("SELECT NOW()")
+  .then(() => {
+    console.log("Database connected successfully");
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on PORT ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Database connection failed:", err.message);
+  });
