@@ -5,12 +5,15 @@ import crypto from "crypto";
 export const createPremiumOrder = async (req, res, next) => {
   try {
     const orderId = crypto.randomUUID();
+    console.log(orderId,"orderId")
 
     const order = await Order.create({
       orderId,
-      UserId: req.user.userId,
+      userId: req.user.userId,// ✅ FIXED
       status: "PENDING",
     });
+
+    console.log("REQ USER 👉", req.user);
 
     return res.status(201).json({
       orderId: order.orderId,
@@ -21,19 +24,18 @@ export const createPremiumOrder = async (req, res, next) => {
   }
 };
 
+
 export const verifyPremiumPayment = async (req, res, next) => {
   try {
     const { orderId, paymentId } = req.body;
     const userId = req.user.userId;
 
     const order = await Order.findOne({
-      where: { orderId, UserId: userId },
+      where: { orderId, userId },// ✅ FIXED
     });
-
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-
     // Payment verification logic will be added later (Cashfree)
     order.paymentId = paymentId;
     order.status = "SUCCESS";

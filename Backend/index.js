@@ -1,20 +1,18 @@
 import dotenv from "dotenv";
+dotenv.config({ path: "./.env" }); // MUST be first
+
+import {app} from "./app.js";
 import pgPool from "./config/db.js";
-import { app } from "./app.js";
 
-dotenv.config({ path: "./.env" });
+const PORT = process.env.PORT || 8000;
 
-console.log("🚀 SERVER ENTRY FILE LOADED");
-
-// Test PostgreSQL connection first
-pgPool
-  .query("SELECT NOW()")
+pgPool.query("SELECT NOW()")
   .then(() => {
     console.log("Database connected successfully");
+    console.log("JWT_SECRET:", process.env.JWT_SECRET); // DEBUG (temporary)
 
-    const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`Server running on PORT ${PORT}`);
+      console.log(`🚀 Server running on PORT ${PORT}`);
     });
   })
   .catch((err) => {
